@@ -1035,6 +1035,8 @@ sub needs {
 
   Rex::Logger::debug("need to call tasks from $self");
 
+  $self =~ s/::/:/g;
+
   my @tasks_to_run;
   if($self) {
     @tasks_to_run = $tl->get_all_tasks(qr{^\Q$self\E:[A-Za-z0-9_\-]+$});
