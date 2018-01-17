@@ -23,6 +23,20 @@ use Rex::Commands;
   1;
 }
 
+{
+  package Nested::Module;
+
+  use strict;
+  use warnings;
+
+  use Rex::Commands;
+
+  task "test", sub {
+    open( my $fh, ">", "test.txt" );
+    close($fh);
+  };
+}
+
 task "test", sub {
   needs MyTest;
 
@@ -62,9 +76,20 @@ task "test4", sub {
   close($fh);
 };
 
+task "test5", sub {
+  needs Nested::Module "test";
+
+  if ( -f "test.txt" ) {
+    unlink("test.txt");
+    return 1;
+  }
+
+  die;
+};
+
 my $task_list = Rex::TaskList->create;
 my $run_list  = Rex::RunList->instance;
-$run_list->parse_opts(qw/test test2 test3/);
+$run_list->parse_opts(qw/test test2 test3 test5/);
 
 for my $task ( $run_list->tasks ) {
   $task_list->run($task);
